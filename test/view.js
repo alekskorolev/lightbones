@@ -5,9 +5,14 @@
   QUnit.module('Backbone.View', {
 
     beforeEach: function(assert) {
-      $('#qunit-fixture').append(
+      var testEl = document.createElement('div');
+
+      testEl.id = 'testElement';
+      testEl.innerHTML = '<h1>Test</h1>';
+      document.querySelector('#qunit-fixture').appendChild(testEl);
+      /*$('#qunit-fixture').append(
         '<div id="testElement"><h1>Test</h1></div>'
-      );
+      );*/
 
       view = new Backbone.View({
         id: 'test-view',
