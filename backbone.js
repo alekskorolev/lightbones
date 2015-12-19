@@ -14,21 +14,19 @@
 
   // Set up Backbone appropriately for the environment. Start with AMD.
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery', 'exports'], function(_, $, exports) {
+    define(['exports'], function(exports) {
       // Export global even in AMD case in case this script is loaded with
       // others that may still expect a global Backbone.
-      root.Backbone = factory(root, exports, _, $);
+      root.Backbone = factory(root, exports);
     });
 
   // Next for Node.js or CommonJS. jQuery may not be needed as a module.
   } else if (typeof exports !== 'undefined') {
-    var _ = require('underscore'), $;
-    try { $ = require('jquery'); } catch (e) {}
-    factory(root, exports, _, $);
+    factory(root, exports);
 
   // Finally, as a browser global.
   } else {
-    root.Backbone = factory(root, {}, root._, (root.jQuery || root.Zepto || root.ender || root.$));
+    root.Backbone = factory(root, {});
   }
 
 })(function(root, Backbone, _, $) {
@@ -97,9 +95,10 @@
     }
   };
   var addUnderscoreMethods = function(Class, methods, attribute) {
-    _.each(methods, function(length, method) {
+    // underscore depricated
+/*    _.each(methods, function(length, method) {
       if (_[method]) Class.prototype[method] = addMethod(length, method, attribute);
-    });
+    });*/
   };
 
   // Support `collection.sortBy('attr')` and `collection.findWhere({id: 1})`.
@@ -379,7 +378,8 @@
 
   // Allow the `Backbone` object to serve as a global event bus, for folks who
   // want global "pubsub" in a convenient place.
-  _.extend(Backbone, Events);
+  //_.extend(Backbone, Events);
+  Object.assign(Backbone, Events);
 
   // Backbone.Model
   // --------------
@@ -405,7 +405,7 @@
   };
 
   // Attach all inheritable methods to the Model prototype.
-  _.extend(Model.prototype, Events, {
+  Object.assign(Model.prototype, Events, {
 
     // A hash of attributes whose current and previous value differ.
     changed: null,
@@ -775,7 +775,7 @@
   };
 
   // Define the Collection's inheritable methods.
-  _.extend(Collection.prototype, Events, {
+  Object.assign(Collection.prototype, Events, {
 
     // The default model for a collection is just a **Backbone.Model**.
     // This should be overridden in most cases.
@@ -1207,7 +1207,7 @@
   var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events'];
 
   // Set up all inheritable **Backbone.View** properties and methods.
-  _.extend(View.prototype, Events, {
+  Object.assign(View.prototype, Events, {
 
     // The default `tagName` of a View's element is `"div"`.
     tagName: 'div',
@@ -1456,7 +1456,7 @@
   var escapeRegExp  = /[\-{}\[\]+?.,\\\^$|#\s]/g;
 
   // Set up all inheritable **Backbone.Router** properties and methods.
-  _.extend(Router.prototype, Events, {
+  Object.assign(Router.prototype, Events, {
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
@@ -1547,7 +1547,7 @@
   // falls back to polling.
   var History = Backbone.History = function() {
     this.handlers = [];
-    this.checkUrl = _.bind(this.checkUrl, this);
+    this.checkUrl = this.checkUrl.bind(this);
 
     // Ensure that `History` can be used outside of the browser.
     if (typeof window !== 'undefined') {
@@ -1569,7 +1569,7 @@
   History.started = false;
 
   // Set up all inheritable **Backbone.History** properties and methods.
-  _.extend(History.prototype, Events, {
+  Object.assign(History.prototype, Events, {
 
     // The default interval to poll for hash changes, if necessary, is
     // twenty times a second.
@@ -1854,18 +1854,19 @@
     // The constructor function for the new subclass is either defined by you
     // (the "constructor" property in your `extend` definition), or defaulted
     // by us to simply call the parent constructor.
-    if (protoProps && _.has(protoProps, 'constructor')) {
+    if (protoProps && protoProps.hasOwnProperty('constructor')) {
       child = protoProps.constructor;
     } else {
       child = function(){ return parent.apply(this, arguments); };
     }
 
     // Add static properties to the constructor function, if supplied.
-    _.extend(child, parent, staticProps);
+    Object.assign(child, parent, staticProps);
 
     // Set the prototype chain to inherit from `parent`, without calling
     // `parent`'s constructor function and add the prototype properties.
-    child.prototype = _.create(parent.prototype, protoProps);
+    // TODO: maybe not create but other function
+    child.prototype = Object.assign({}, parent.prototype, protoProps);
     child.prototype.constructor = child;
 
     // Set a convenience property in case the parent's prototype is needed

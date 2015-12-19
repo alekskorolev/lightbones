@@ -13,14 +13,13 @@
   var Location = function(href) {
     this.replace(href);
   };
-
-  _.extend(Location.prototype, {
+  Object.assign(Location.prototype, {
 
     parser: document.createElement('a'),
 
     replace: function(href) {
       this.parser.href = href;
-      _.extend(this, _.pick(this.parser,
+      Object.assign(this, _.pick(this.parser,
         'href',
         'hash',
         'host',
@@ -67,7 +66,7 @@
       this.value = value;
     }
   };
-  ExternalObject.routingFunction = _.bind(ExternalObject.routingFunction, ExternalObject);
+  ExternalObject.routingFunction = ExternalObject.routingFunction.bind(ExternalObject);
 
   var Router = Backbone.Router.extend({
 
