@@ -10,6 +10,7 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
         'http://cdn.polyfill.io/v2/polyfill.js',
+        'test/vendor/jquery.js',
         'backbone.js',
         'test/setup/*.js',
         'test/*.js'

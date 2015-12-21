@@ -30,7 +30,8 @@
     assert.equal(this.ajaxSettings.url, '/library');
     assert.equal(this.ajaxSettings.type, 'GET');
     assert.equal(this.ajaxSettings.dataType, 'json');
-    assert.ok(_.isEmpty(this.ajaxSettings.data));
+    data = this.ajaxSettings.data
+    assert.ok(!data);
   });
 
   QUnit.test('passing data', function(assert) {
