@@ -48,7 +48,7 @@
     assert.expect(3);
     var Collection = Backbone.Collection.extend({
       parse: function(data) {
-        return _.filter(data, function(datum) {
+        return data.filter(function(datum) {
           return datum.a % 2 === 0;
         });
       }
@@ -279,7 +279,7 @@
   QUnit.test('add with parse and merge', function(assert) {
     var collection = new Backbone.Collection();
     collection.parse = function(attrs) {
-      return _.map(attrs, function(model) {
+      return attrs.map(function(model) {
         if (model.model) return model.model;
         return model;
       });
@@ -1486,8 +1486,11 @@
         Backbone.Model.apply(this, arguments);
       },
       parse: function(attrs) {
+        var omitAttrs = {};
+
         this.items.set(attrs.items, {parse: true});
-        return _.omit(attrs, 'items');
+        Object.keys(attrs).forEach(function(k){ if (k!=='items') omitAttrs[k]=attrs[k]})
+        return omitAttrs;
       }
     });
 
@@ -1497,8 +1500,11 @@
         Backbone.Model.apply(this, arguments);
       },
       parse: function(attrs) {
+        var omitAttrs = {};
+
         this.subItems.set(attrs.subItems, {parse: true});
-        return _.omit(attrs, 'subItems');
+        Object.keys(attrs).forEach(function(k){ if (k!=='subItems') omitAttrs[k]=attrs[k]})
+        return omitAttrs;
       }
     });
 
